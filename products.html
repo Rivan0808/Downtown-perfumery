@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Collection | Premium Fragrances</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: sans-serif;
+        }
+
+        body {
+            background: linear-gradient(180deg, rgba(30,0,43,1) 0%, rgba(20,0,30,1) 100%);
+            color: #f5f2eb;
+            padding: 60px 20px;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Top Bar with Cart Button */
+        .nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(245, 242, 235, 0.1);
+        }
+
+        .page-title {
+            font-family: 'Georgia', serif;
+            font-size: 2.5rem;
+            font-weight: 400;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .view-cart-btn {
+            background: transparent;
+            border: 1px solid #dfba73;
+            color: #dfba73;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .view-cart-btn:hover {
+            background: #dfba73;
+            color: #1e002b;
+        }
+
+        /* Product Grid Group */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .product-card {
+            background: rgba(74, 12, 38, 0.15); 
+            border: 1px solid rgba(74, 12, 38, 0.3);
+            border-radius: 4px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(223, 186, 115, 0.4); 
+        }
+
+        .product-image-container {
+            width: 100%;
+            height: 320px;
+            background: rgba(20, 0, 30, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .product-image-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            transition: opacity 0.2s ease;
+        }
+
+        .product-name {
+            font-family: 'Georgia', serif;
+            font-size: 1.3rem;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            color: #fdfaf2;
+        }
+
+        .product-notes {
+            font-size: 0.85rem;
+            color: #d1c7bd;
+            font-style: italic;
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
+            min-height: 34px;
+        }
+
+        .product-meta-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(245, 242, 235, 0.1);
+        }
+
+        .price-display {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #dfba73; 
+        }
+
+        .selector-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .custom-select {
+            background: #1e002b;
+            color: #f5f2eb;
+            border: 1px solid rgba(245, 242, 235, 0.2);
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            outline: none;
+            border-radius: 2px;
+            cursor: pointer;
+        }
+
+        .add-to-cart-btn {
+            width: 100%;
+            padding: 14px;
+            background: transparent;
+            border: 1px solid #dfba73;
+            color: #dfba73;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: auto;
+            border-radius: 2px;
+        }
+
+        .add-to-cart-btn:hover {
+            background: #dfba73;
+            color: #1e002b;
+        }
+
+        /* Slide-out Cart Drawer Panel */
+        .cart-drawer {
+            position: fixed;
+            top: 0;
+            right: -400px; /* Hidden offscreen by default */
+            width: 400px;
+            height: 100%;
+            background: #1e002b;
+            border-left: 1px solid rgba(74, 12, 38, 0.5);
+            box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+            z-index: 1000;
+            transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cart-drawer.open {
+            right: 0;
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(245, 242, 235, 0.1);
+            padding-bottom: 15px;
+        }
+
+        .cart-header h2 {
+            font-family: 'Georgia', serif;
+            font-size: 1.5rem;
+            color: #fdfaf2;
+        }
+
+        .close-cart-btn {
+            background: transparent;
+            border: none;
+            color: #d1c7bd;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .cart-items-container {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        /* Layout for an individual item inside the cart list */
+        .cart-item {
+            background: rgba(74, 12, 38, 0.2);
+            border: 1px solid rgba(74, 12, 38, 0.4);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 2px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-item-details h4 {
+            font-family: 'Georgia', serif;
+            color: #fdfaf2;
+            margin-bottom: 4px;
+        }
+
+        .cart-item-details p {
+            font-size: 0.8rem;
+            color: #d1c7bd;
+        }
+
+        .cart-item-price {
+            font-weight: 600;
+            color: #dfba73;
+        }
+
+        .cart-footer {
+            border-top: 1px solid rgba(245, 242, 235, 0.1);
+            padding-top: 20px;
+        }
+
+        .cart-total-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            padding: 16px;
+            background: #dfba73;
+            color: #1e002b;
+            border: none;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .checkout-btn:hover {
+            background: #fdfaf2;
+        }
+
+        /* Dimming Overlay Panel */
+        .cart-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+
+        .cart-overlay.open {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Navigation Header Area -->
+        <header class="nav-bar">
+            <h1 class="page-title">The Master Collection</h1>
+            <button class="view-cart-btn" id="openCartBtn">View Cart (0)</button>
+        </header>
+
+        <main class="product-grid">
+            
+            <!-- 1. Hawas ICE -->
+            <article class="product-card" data-img-prefix="hawas-ice" data-base-price-50ml="700" data-base-price-20ml="400">
+                <div class="product-image-container"><img class="product-img" src="" alt="Hawas ICE"></div>
+                <h2 class="product-name">Hawas ICE</h2>
+                <p class="product-notes">Notes: Frosty mint, intense citrus, clean aquatic undertones</p>
+                <div class="product-meta-row">
+                    <div class="price-display">₹700.00</div>
+                    <div class="selector-group">
+                        <select class="custom-select size-select"><option value="50ml">50 ml</option><option value="20ml">20 ml</option></select>
+                        <select class="custom-select qty-select"><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>
+                    </div>
+                </div>
+                <button class="add-to-cart-btn">Add To Cart</button>
+            </article>
+
+            <!-- 2. Dior Sauvage -->
+            <article class="product-card" data-img-prefix="dior-sauvage" data-base-price-50ml="700" data-base-price-20ml="400">
+                <div class="product-image-container"><img class="product-img" src="" alt="Dior Sauvage"></div>
+                <h2 class="product-name">Dior Sauvage</h2>
+                <p class="product-notes">Notes: Crisp bergamot, raw amberwood, metallic pepper</p>
+                <div class="product-meta-row">
+                    <div class="price-display">₹700.00</div>
+                    <div class="selector-group">
+                        <select class="custom-select size-select"><option value="50ml">50 ml</option><option value="20ml">20 ml</option></select>
+                        <select class="custom-select qty-select"><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>
+                    </div>
+                </div>
+                <button class="add-to-cart-btn">Add To Cart</button>
+            </article>
+
+            <!-- 3. Gucci Flora -->
+            <article class="product-card" data-img-prefix="gucci-flora" data-base-price-50ml="700" data-base-price-20ml="400">
+                <div class="product-image-container"><img class="product-img" src="" alt="Gucci Flora"></div>
+                <h2 class="product-name">Gucci Flora</h2>
+                <p class="product-notes">Notes: Radiant white gardenia, jasmine absolute, sweet brown sugar</p>
+                <div class="product-meta-row">
+                    <div class="price-display">₹700.00</div>
+                    <div class="selector-group">
+                        <select class="custom-select size-select"><option value="50ml">50 ml</option><option value="20ml">20 ml</option></select>
+                        <select class="custom-select qty-select"><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>
+                    </div>
+                </div>
+                <button class="add-to-cart-btn">Add To Cart</button>
+            </article>
+
+            <!-- 4. Ameer-Al-oudh -->
+            <article class="product-card" data-img-prefix="ameer-al-oudh" data-base-price-50ml="700" data-base-price-20ml="400">
+                <div class="product-image-container"><img class="product-img" src="" alt="Ameer-Al-oudh"></div>
+                <h2 class="product-name">Ameer-Al-oudh</h2>
+                <p class="product-notes">Notes: Deep dark oudh wood, warm sugar resins, vanilla absolute</p>
+                <div class="product-meta-row">
+                    <div class="price-display">₹700.00</div>
+                    <div class="selector-group">
+                        <select class="custom-select size-select"><option value="50ml">50 ml</option><option value="20ml">20 ml</option></select>
+                        <select class="custom-select qty-select"><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>
+                    </div>
+                </div>
+                <button class="add-to-cart-btn">Add To Cart</button>
+            </article>
+
+            <!-- 5. Bleu De Chanel -->
+            <article class="product-card" data-img-prefix="bleu-de-chanel" data-base-price-50ml="700" data-base-price-20ml="400">
+                <div class="product-image-container"><img class="product-img" src="" alt="Bleu De Chanel"></div>
+                <h2 class="product-name">Bleu De Chanel</h2>
+                <p class="product-notes">Notes: Aromatic grapefruit, dry cedarwood, incense smoke</p>
+                <div class="product-meta-row">
+                    <div class="price-display">₹700.00</div>
+                    <div class="selector-group">
+                        <select class="custom-select size-select"><option value="50ml">50 ml</option><option value="20ml">20 ml</option></select>
+                        <select class="custom-select qty-select"><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>
+                    </div>
+                </div>
+                <button class="add-to-cart-btn">Add To Cart</button>
+            </article>
+
+            <!-- 6. Vampire Blood -->
+            <article class="product-card" data-img-prefix="vampire-blood" data-base-price-50ml="700" data-base-price-20ml="400">
+                <div class="product-image-container"><img class="product-img" src="" alt="Vampire Blood"></div>
+                <h2 class="product-name">Vampire Blood</h2>
+                <p class="product-notes">Notes: Dark crimson berries, midnight plum, mysterious musk</p>
+                <div class="product-meta-row">
+                    <div class="price-display">₹700.00</div>
+                    <div class="selector-group">
+                        <select class="custom-select size-select"><option value="50ml">50 ml</option><option value="20ml">20 ml</option></select>
+                        <select class="custom-select qty-select"><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>
+                    </div>
+                </div>
+                <button class="add-to-cart-btn">Add To Cart</button>
+            </article>
+
+            <!-- 7. Creed Aventus -->
+            <article class="product-card" data-img-prefix="creed-aventus" data-base-price-50ml="700" data-base-price-20ml="400">
+                <div class="product-image-container"><img class="product-img" src="" alt="Creed Aventus"></div>
+                <h2 class="product-name">Creed Aventus</h2>
+                <p class="product-notes">Notes: Royal pineapple, smoky birch bark, rich oakmoss</p>
+                <div class="product-meta-row">
+                    <div class="price-display">₹700.00</div>
+                    <div class="selector-group">
+                        <select class="custom-select size-select"><option value="50ml">50 ml</option><option value="20ml">20 ml</option></select>
+                        <select class="custom-select qty-select"><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>
+                    </div>
+                </div>
+                <button class="add-to-cart-btn">Add To Cart</button>
+            </article>
+
+            <!-- 8. 1 Million -->
+            <article class="product-card" data-img-prefix="1-million" data-base-price-50ml="700" data-base-price-20ml="400">
+                <div class="product-image-container"><img class="product-img" src="" alt="1 Million"></div>
+                <h2 class="product-name">1 Million</h2>
+                <p class="product-notes">Notes: Blood mandarin, frosted cinnamon, masculine leather</p>
+                <div class="product-meta-row">
+                    <div class="price-display">₹700.00</div>
+                    <div class="selector-group">
+                        <select class="custom-select size-select"><option value="50ml">50 ml</option><option value="20ml">20 ml</option></select>
+                        <select class="custom-select qty-select"><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>
+                    </div>
+                </div>
+                <button class="add-to-cart-btn">Add To Cart</button>
+            </article>
+
+            <!-- 9. Davidoff Cool Water -->
+            <article class="product-card" data-img-prefix="davidoff-cool-water" data-base-price-50ml="700" data-base-price-20ml="400">
+                <div class="product-image-container"><img class="product-img" src="" alt="Davidoff cool water"></div>
+                <h2 class="product-name">Davidoff Cool Water</h2>
+                <p class="product-notes">Notes: Sharp ocean air, clean lavender, fresh green rosemary</p>
+                <div class="product-meta-row">
+                    <div class="price-display">₹700.00</div>
+                    <div class="selector-group">
+                        <select class="custom-select size-select"><option value="50ml">50 ml</option><option value="20ml">20 ml</option></select>
+                        <select class="custom-select qty-select"><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>
+                    </div>
+                </div>
+                <button class="add-to-cart-btn">Add To Cart</button>
+            </article>
+
+            <!-- 10. Armani Passione -->
+            <article class="product-card" data-img-prefix="armani-passione" data-base-price-50ml="700" data-base-price-20ml="400">
+                <div class="product-image-container"><img class="product-img" src="" alt="Armani passione"></div>
+                <h2 class="product-name">Armani Passione</h2>
+                <p class="product-notes">Notes: Spicy pink pepper, elegant red rose, sweet vanilla woody base</p>
+                <div class="product-meta-row">
+                    <div class="price-display">₹700.00</div>
+                    <div class="selector-group">
+                        <select class="custom-select size-select"><option value="50ml">50 ml</option><option value="20ml">20 ml</option></select>
+                        <select class="custom-select qty-select"><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>
+                    </div>
+                </div>
+                <button class="add-to-cart-btn">Add To Cart</button>
+            </article>
+
+            <!-- 11. Dunhill -->
+            <article class="product-card" data-img-prefix="dunhill" data-base-price-50ml="700" data-base-price-20ml="400">
+                <div class="product-image-container"><img class="product-img" src="" alt="Dunhill"></div>
+                <h2 class="product-name">Dunhill</h2>
+                <p class="product-notes">Notes: Classic English lavender, white neroli, structured sandalwood</p>
+                <div class="product-meta-row">
+                    <div class="price-display">₹700.00</div>
+                    <div class="selector-group">
+                        <select class="custom-select size-select"><option value="50ml">50 ml</option><option value="20ml">20 ml</option></select>
+                        <select class="custom-select qty-select"><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>
+                    </div>
+                </div>
+                <button class="add-to-cart-btn">Add To Cart</button>
+            </article>
+
+            <!-- 12. Diptyque Tam Dao -->
+            <article class="product-card" data-img-prefix="diptyque-tamdao" data-base-price-50ml="700" data-base-price-20ml="400">
+                <div class="product-image-container"><img class="product-img" src="" alt="Diptique Tamdao"></div>
+                <h2 class="product-name">Diptyque Tam Dao</h2>
+                <p class="product-notes">Notes: Rich Goa sandalwood, dry cedar, bright exotic cypress</p>
+                <div class="product-meta-row">
+                    <div class="price-display">₹700.00</div>
+                    <div class="selector-group">
+                        <select class="custom-select size-select"><option value="50ml">50 ml</option><option value="20ml">20 ml</option></select>
+                        <select class="custom-select qty-select"><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>
+                    </div>
+                </div>
+                <button class="add-to-cart-btn">Add To Cart</button>
+            </article>
+
+            <!-- 13. Azzaro The Most Wanted -->
+            <article class="product-card" data-img-prefix="azzaro-most-wanted" data-base-price-50ml="700" data-base-price-20ml="400">
+                <div class="product-image-container"><img class="product-img" src="50 ml.jpeg" alt="Azzaro the most wanted"></div>
+                <h2 class="product-name">Azzaro The Most Wanted</h2>
+                <p class="product-notes">Notes: Warm fiery cardamom, thick sweet toffee, deep amber trail</p>
+                <div class="product-meta-row">
+                    <div class="price-display">₹700.00</div>
+                    <div class="selector-group">
+                        <select class="custom-select size-select"><option value="50ml">50 ml</option><option value="20ml">20 ml</option></select>
+                        <select class="custom-select qty-select"><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>
+                    </div>
+                </div>
+                <button class="add-to-cart-btn">Add To Cart</button>
+            </article>
+
+            <!-- 14. YSL Y -->
+            <article class="product-card" data-img-prefix="ysl-y" data-base-price-50ml="700" data-base-price-20ml="400">
+                <div class="product-image-container"><img class="product-img" src="ysl y.png" alt="YSL Y"></div>
+                <h2 class="product-name">YSL Y</h2>
+                <p class="product-notes">Notes: Fresh green apple, crystal sage, deep clean vetiver</p>
+                <div class="product-meta-row">
+                    <div class="price-display">₹700.00</div>
+                    <div class="selector-group">
+                        <select class="custom-select size-select"><option value="50ml">50 ml</option><option value="20ml">20 ml</option></select>
+                        <select class="custom-select qty-select"><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>
+                    </div>
+                </div>
+                <button class="add-to-cart-btn">Add To Cart</button>
+            </article>
+
+        </main>
+    </div>
+
+    <!-- Black Background Overlay Layer -->
+    <div class="cart-overlay" id="cartOverlay"></div>
+
+    <!-- Side View Cart Panel -->
+    <aside class="cart-drawer" id="cartDrawer">
+        <div class="cart-header">
+            <h2>Your Selection</h2>
+            <button class="close-cart-btn" id="closeCartBtn">&times;</button>
+        </div>
+        
+        <div class="cart-items-container" id="cartItemsContainer">
+            <!-- JavaScript will insert item blocks here automatically -->
+        </div>
+
+        <div class="cart-footer">
+            <div class="cart-total-row">
+                <span>Total Amount:</span>
+                <span id="cartTotalDisplay">₹0.00</span>
+            </div>
+            <!-- Added id="checkoutBtn" to target checkout navigation handler -->
+            <button class="checkout-btn" id="checkoutBtn">Proceed to Checkout</button>
+        </div>
+    </aside>
+
+    <script>
+        // Array to manage added cart contents globally
+        let cart = [];
+
+        const cartDrawer = document.getElementById('cartDrawer');
+        const cartOverlay = document.getElementById('cartOverlay');
+        const openCartBtn = document.getElementById('openCartBtn');
+        const closeCartBtn = document.getElementById('closeCartBtn');
+        const cartItemsContainer = document.getElementById('cartItemsContainer');
+        const cartTotalDisplay = document.getElementById('cartTotalDisplay');
+        const checkoutBtn = document.getElementById('checkoutBtn');
+
+        // Drawer state toggle triggers
+        function openCart() {
+            cartDrawer.classList.add('open');
+            cartOverlay.classList.add('open');
+        }
+
+        function closeCart() {
+            cartDrawer.classList.remove('open');
+            cartOverlay.classList.remove('open');
+        }
+
+        openCartBtn.addEventListener('click', openCart);
+        closeCartBtn.addEventListener('click', closeCart);
+        cartOverlay.addEventListener('click', closeCart);
+
+        // Render contents of the cart state array cleanly inside the panel layout
+        function renderCart() {
+            cartItemsContainer.innerHTML = '';
+            let totalAmount = 0;
+            let totalItemsCount = 0;
+
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = '<p style="text-align:center; color:#d1c7bd; padding-top:40px;">Your cart is empty.</p>';
+            } else {
+                cart.forEach(item => {
+                    totalAmount += item.totalPrice;
+                    totalItemsCount += item.quantity;
+
+                    const itemElement = document.createElement('div');
+                    itemElement.classList.add('cart-item');
+                    itemElement.innerHTML = `
+                        <div class="cart-item-details">
+                            <h4>${item.name}</h4>
+                            <p>Size: ${item.size} | Qty: ${item.quantity}</p>
+                        </div>
+                        <div class="cart-item-price">₹${item.totalPrice.toLocaleString('en-IN')}.00</div>
+                    `;
+                    cartItemsContainer.appendChild(itemElement);
+                });
+            }
+
+            cartTotalDisplay.textContent = `\u20B9${totalAmount.toLocaleString('en-IN')}.00`;
+            openCartBtn.textContent = `View Cart (${totalItemsCount})`;
+        }
+
+        // CONNECTIVITY ENGINE: Packages selection context and handles storage handoffs
+        checkoutBtn.addEventListener('click', () => {
+            if (cart.length === 0) {
+                alert("Please add at least one fragrance to your cart before checking out.");
+                return;
+            }
+            // Commit active cart state array to localized tracking storage context
+            localStorage.setItem('perfumeCart', JSON.stringify(cart));
+            // Handoff user workflow explicitly down to checkout system layout page
+            window.location.href = 'payments.html';
+        });
+
+        // Initialize logic engines for individual catalog cards
+        document.querySelectorAll('.product-card').forEach(card => {
+            const sizeSelect = card.querySelector('.size-select');
+            const qtySelect = card.querySelector('.qty-select');
+            const priceDisplay = card.querySelector('.price-display');
+            const productImg = card.querySelector('.product-img');
+            const name = card.querySelector('.product-name').textContent;
+            const addToCartBtn = card.querySelector('.add-to-cart-btn');
+
+            function getCalculations() {
+                const size = sizeSelect.value;
+                const qty = parseInt(qtySelect.value);
+                let unitPrice = size === '50ml' ? parseFloat(card.getAttribute('data-base-price-50ml')) : parseFloat(card.getAttribute('data-base-price-20ml'));
+                return { size, qty, totalPrice: unitPrice * qty };
+            }
+
+            function updateCardState() {
+                const calcs = getCalculations();
+                priceDisplay.textContent = `\u20B9${calcs.totalPrice.toLocaleString('en-IN')}.00`;
+
+                // Set image file based on size selection
+                const newImgSrc = calcs.size === '50ml' ? '50 ml.jpeg' : '20 ml.jpeg';
+                
+                productImg.style.opacity = '0.3';
+                setTimeout(() => {
+                    productImg.src = newImgSrc;
+                    productImg.style.opacity = '1';
+                }, 150);
+            }
+
+            // Handle checkout array integration on action press
+            addToCartBtn.addEventListener('click', () => {
+                const calcs = getCalculations();
+                
+                // If specific scent variant already exists inside stack, accumulate properties smoothly
+                const existingIndex = cart.findIndex(item => item.name === name && item.size === calcs.size);
+                
+                if (existingIndex > -1) {
+                    cart[existingIndex].quantity += calcs.qty;
+                    cart[existingIndex].totalPrice += calcs.totalPrice;
+                } else {
+                    cart.push({
+                        name: name,
+                        size: calcs.size,
+                        quantity: calcs.qty,
+                        totalPrice: calcs.totalPrice
+                    });
+                }
+                
+                renderCart();
+                openCart();
+            });
+
+            sizeSelect.addEventListener('change', updateCardState);
+            qtySelect.addEventListener('change', updateCardState);
+
+            updateCardState();
+        });
+    </script>
+</body>
+</html>
